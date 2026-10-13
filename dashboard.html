@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Radix IT Helpdesk Dashboard</title>
+<style>
+  :root {
+    --bg:        #0f1117;
+    --surface:   #1a1d27;
+    --surface2:  #22263a;
+    --border:    #2e3350;
+    --accent:    #4f6ef7;
+    --green:     #22c55e;
+    --yellow:    #f59e0b;
+    --red:       #ef4444;
+    --blue:      #60a5fa;
+    --text:      #e8eaf6;
+    --muted:     #7b82a8;
+    --radius:    12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--accent), #7b5ea7);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .header h1 { font-size: 20px; font-weight: 700; }
+  .header p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+  }
+
+  .refresh-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 7px 14px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-value { font-size: 36px; font-weight: 700; letter-spacing: -1px; margin: 6px 0 4px; }
+  .stat-sub   { font-size: 11px; color: var(--muted); }
+
+  .stat.blue   .stat-value { color: var(--blue); }
+  .stat.green  .stat-value { color: var(--green); }
+  .stat.yellow .stat-value { color: var(--yellow); }
+  .stat.red    .stat-value { color: var(--red); }
+
+  /* Charts row */
+  .charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+
+  /* Bar chart */
+  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+
+  .bar-item {}
+  .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .bar-track {
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  /* Donut chart */
+  .donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .donut-svg { flex-shrink: 0; }
+
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .legend-count { color: var(--muted); margin-left: auto; font-size: 11px; }
+
+  /* Users table */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .table-header-row {
+    display: grid;
+    grid-template-columns: 180px 1fr 130px 120px 90px;
+    padding: 12px 20px;
+    background: var(--surface2);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 180px 1fr 130px 120px 90px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    align-items: center;
+    transition: background 0.1s;
+  }
+
+  .table-row:last-child { border-bottom: none; }
+  .table-row:hover { background: var(--surface2); }
+
+  .user-name { font-weight: 500; }
+  .user-email { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .badge.ticket  { background: #1e3a5f; color: #60a5fa; }
+  .badge.it_question { background: #1a2e1a; color: #4ade80; }
+  .badge.resolved { background: #1a2e1a; color: #86efac; }
+  .badge.greeting { background: #2d2010; color: #fbbf24; }
+
+  /* Activity log */
+  .log-list { display: flex; flex-direction: column; gap: 0; }
+
+  .log-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .log-item:last-child { border-bottom: none; }
+
+  .log-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .log-body { flex: 1; }
+  .log-name { font-weight: 500; }
+  .log-msg  { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .log-time { font-size: 11px; color: var(--muted); flex-shrink: 0; margin-top: 3px; }
+
+  /* Loading */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    color: var(--muted);
+    gap: 12px;
+  }
+
+  .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Empty */
+  .empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    body { padding: 16px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .charts { grid-template-columns: 1fr; }
+    .table-header-row,
+    .table-row { grid-template-columns: 1fr 1fr 90px; }
+    .table-header-row > :nth-child(3),
+    .table-row > :nth-child(3),
+    .table-header-row > :nth-child(4),
+    .table-row > :nth-child(4) { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat-value { font-size: 28px; }
+  }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .top-users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .top-user-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+
+  .top-user-name { font-weight: 600; font-size: 13px; }
+  .top-user-email { font-size: 11px; color: var(--muted); margin: 2px 0 8px; }
+  .top-user-stats { display: flex; gap: 10px; }
+  .top-user-stat  { font-size: 11px; color: var(--muted); }
+  .top-user-stat span { color: var(--text); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">🤖</div>
+    <div>
+      <h1>Radix IT Helpdesk</h1>
+      <p>Bot Usage Dashboard — Live from Google Sheets</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      Live Data
+    </div>
+    <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat blue">
+    <div class="stat-label">Total Interactions</div>
+    <div class="stat-value" id="statTotal">—</div>
+    <div class="stat-sub">All time</div>
+  </div>
+  <div class="stat green">
+    <div class="stat-label">Unique Users</div>
+    <div class="stat-value" id="statUsers">—</div>
+    <div class="stat-sub">Employees using bot</div>
+  </div>
+  <div class="stat yellow">
+    <div class="stat-label">Tickets Raised</div>
+    <div class="stat-value" id="statTickets">—</div>
+    <div class="stat-sub">Auto-created</div>
+  </div>
+  <div class="stat red">
+    <div class="stat-label">Issues Resolved</div>
+    <div class="stat-value" id="statResolved">—</div>
+    <div class="stat-sub">By bot without ticket</div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="charts">
+  <div class="card">
+    <div class="card-title">Interaction Types</div>
+    <div class="donut-wrap">
+      <svg class="donut-svg" width="120" height="120" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="48" fill="none" stroke="#22263a" stroke-width="18"/>
+        <g id="donutArcs"></g>
+        <text x="60" y="57" text-anchor="middle" fill="#e8eaf6" font-size="18" font-weight="700" id="donutTotal">0</text>
+        <text x="60" y="72" text-anchor="middle" fill="#7b82a8" font-size="9">total</text>
+      </svg>
+      <div class="donut-legend" id="donutLegend"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Top Issue Categories</div>
+    <div class="bar-chart" id="barChart">
+      <div class="empty">Loading...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Top Users -->
+<div class="section-title">Most Active Users</div>
+<div class="top-users-grid" id="topUsersGrid" style="margin-bottom:24px">
+  <div class="loading"><div class="spinner"></div></div>
+</div>
+
+<!-- Activity Log -->
+<div class="table-wrap">
+  <div class="table-header-row">
+    <div>Employee</div>
+    <div>Message</div>
+    <div>Type</div>
+    <div>Time</div>
+    <div>Ticket</div>
+  </div>
+  <div id="activityLog">
+    <div class="loading"><div class="spinner"></div><span>Loading activity...</span></div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────
+// Replace with your Google Sheet's CSV export URL
+// File → Share → Publish to web → CSV format → copy link
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vShs4pzConyEzuwecV0S_Lnhqkt_EzYJn1sjcru7zTILDzHQpw-3ZC7Dt0hs0fYJT4s7gayqzT-5J6L/pub?gid=0&single=true&output=csv";
+
+// ── COLORS ─────────────────────────────────────────────
+const TYPE_COLORS = {
+  it_question:   "#4f6ef7",
+  ticket_raised: "#ef4444",
+  resolved:      "#22c55e",
+  greeting:      "#f59e0b",
+  test:          "#7b82a8"
+};
+
+const TYPE_LABELS = {
+  it_question:   "IT Questions",
+  ticket_raised: "Tickets Raised",
+  resolved:      "Resolved",
+  greeting:      "Greetings",
+  test:          "Test"
+};
+
+const TYPE_ICONS = {
+  it_question:   "💬",
+  ticket_raised: "🎫",
+  resolved:      "✅",
+  greeting:      "👋",
+  test:          "🧪"
+};
+
+// ── ISSUE KEYWORDS ─────────────────────────────────────
+const CATEGORIES = {
+  "VPN":      ["vpn", "openvpn", "secureconnect"],
+  "Printer":  ["print", "printer", "hp laser", "canon"],
+  "WiFi":     ["wifi", "wi-fi", "wireless", "internet", "network"],
+  "Password": ["password", "reset", "login", "locked"],
+  "Laptop":   ["laptop", "slow", "performance", "freezing", "crash"],
+  "Email":    ["email", "gmail", "outlook", "mail"],
+  "Slack":    ["slack"],
+  "Zoom":     ["zoom", "camera", "video call"],
+  "Other":    []
+};
+
+function categorize(msg) {
+  const m = msg.toLowerCase();
+  for (const [cat, keywords] of Object.entries(CATEGORIES)) {
+    if (cat === "Other") continue;
+    if (keywords.some(k => m.includes(k))) return cat;
+  }
+  return "Other";
+}
+
+function timeAgo(dateStr) {
+  if (!dateStr) return "—";
+  const d    = new Date(dateStr);
+  const diff = (Date.now() - d) / 1000;
+  if (diff < 60)   return "Just now";
+  if (diff < 3600) return Math.floor(diff/60) + "m ago";
+  if (diff < 86400)return Math.floor(diff/3600) + "h ago";
+  return Math.floor(diff/86400) + "d ago";
+}
+
+// ── LOAD DATA ───────────────────────────────────────────
+async function loadData() {
+  showLoading();
+
+  try {
+    // Fetch CSV from Google Sheets (must be published to web)
+    const res  = await fetch(SHEET_CSV_URL + "&t=" + Date.now());
+    const text = await res.text();
+    const rows = parseCSV(text);
+
+    if (rows.length < 2) {
+      showEmpty("No data yet. Interact with the bot first.");
+      return;
+    }
+
+    const headers = rows[0];
+    const data    = rows.slice(1).map(row => {
+      const obj = {};
+      headers.forEach((h, i) => obj[h.trim()] = (row[i] || "").trim());
+      return obj;
+    }).filter(r => r["User ID"]);
+
+    renderDashboard(data);
+
+  } catch (err) {
+    console.error(err);
+    showError();
+  }
+}
+
+function parseCSV(text) {
+  const rows = [];
+  const lines = text.split("\n");
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const cols = [];
+    let cur = "", inQ = false;
+    for (const ch of line) {
+      if (ch === '"') inQ = !inQ;
+      else if (ch === ',' && !inQ) { cols.push(cur); cur = ""; }
+      else cur += ch;
+    }
+    cols.push(cur);
+    rows.push(cols);
+  }
+  return rows;
+}
+
+// ── RENDER ──────────────────────────────────────────────
+function renderDashboard(data) {
+  // Stats
+  const uniqueUsers = new Set(data.map(r => r["User ID"])).size;
+  const tickets     = data.filter(r => r["Ticket Raised"] === "Yes").length;
+  const resolved    = data.filter(r => r["Response Type"] === "resolved").length;
+
+  document.getElementById("statTotal").textContent   = data.length;
+  document.getElementById("statUsers").textContent   = uniqueUsers;
+  document.getElementById("statTickets").textContent = tickets;
+  document.getElementById("statResolved").textContent= resolved;
+
+  // Donut
+  renderDonut(data);
+
+  // Bar chart
+  renderBarChart(data);
+
+  // Top users
+  renderTopUsers(data);
+
+  // Activity log
+  renderActivityLog(data);
+}
+
+function renderDonut(data) {
+  const counts = {};
+  data.forEach(r => {
+    const t = r["Response Type"] || "other";
+    counts[t] = (counts[t] || 0) + 1;
+  });
+
+  const total  = data.length;
+  const r      = 48;
+  const cx     = 60, cy = 60;
+  const circ   = 2 * Math.PI * r;
+  let offset   = 0;
+  const arcs   = [];
+  const legend = [];
+
+  document.getElementById("donutTotal").textContent = total;
+
+  for (const [type, count] of Object.entries(counts)) {
+    const pct   = count / total;
+    const dash  = pct * circ;
+    const color = TYPE_COLORS[type] || "#7b82a8";
+    arcs.push(`
+      <circle cx="${cx}" cy="${cy}" r="${r}"
+        fill="none" stroke="${color}" stroke-width="18"
+        stroke-dasharray="${dash} ${circ - dash}"
+        stroke-dashoffset="${circ - offset}"
+        transform="rotate(-90 ${cx} ${cy})"
+      />`);
+    offset += dash;
+    legend.push(`
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${color}"></div>
+        <span>${TYPE_LABELS[type] || type}</span>
+        <span class="legend-count">${count}</span>
+      </div>`);
+  }
+
+  document.getElementById("donutArcs").innerHTML    = arcs.join("");
+  document.getElementById("donutLegend").innerHTML  = legend.join("");
+}
+
+function renderBarChart(data) {
+  const itQuestions = data.filter(r => r["Response Type"] === "it_question");
+  const cats        = {};
+  itQuestions.forEach(r => {
+    const cat = categorize(r["Message"] || "");
+    cats[cat] = (cats[cat] || 0) + 1;
+  });
+
+  const sorted = Object.entries(cats).sort((a,b) => b[1]-a[1]).slice(0,6);
+  const max    = sorted[0]?.[1] || 1;
+
+  const colors = ["#4f6ef7","#22c55e","#f59e0b","#ef4444","#a78bfa","#60a5fa"];
+
+  if (!sorted.length) {
+    document.getElementById("barChart").innerHTML =
+      '<div class="empty">No IT questions logged yet</div>';
+    return;
+  }
+
+  document.getElementById("barChart").innerHTML = sorted.map(([cat, count], i) => `
+    <div class="bar-item">
+      <div class="bar-label">
+        <span>${cat}</span>
+        <span style="color:var(--muted)">${count}</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(count/max)*100}%;background:${colors[i%colors.length]}"></div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderTopUsers(data) {
+  const users = {};
+  data.forEach(r => {
+    const id = r["User ID"];
+    if (!id) return;
+    if (!users[id]) users[id] = { name: r["Name"] || id, email: r["Email"] || "", questions: 0, tickets: 0, last: "" };
+    if (r["Response Type"] === "it_question") users[id].questions++;
+    if (r["Ticket Raised"] === "Yes")         users[id].tickets++;
+    if (!users[id].last || r["Timestamp"] > users[id].last) users[id].last = r["Timestamp"];
+  });
+
+  const sorted = Object.values(users).sort((a,b) => b.questions - a.questions).slice(0,8);
+
+  if (!sorted.length) {
+    document.getElementById("topUsersGrid").innerHTML = '<div class="empty">No users yet</div>';
+    return;
+  }
+
+  document.getElementById("topUsersGrid").innerHTML = sorted.map(u => `
+    <div class="top-user-card">
+      <div class="top-user-name">${esc(u.name)}</div>
+      <div class="top-user-email">${esc(u.email)}</div>
+      <div class="top-user-stats">
+        <div class="top-user-stat">Questions: <span>${u.questions}</span></div>
+        <div class="top-user-stat">Tickets: <span>${u.tickets}</span></div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderActivityLog(data) {
+  const recent = [...data].reverse().slice(0, 50);
+
+  if (!recent.length) {
+    document.getElementById("activityLog").innerHTML = '<div class="empty">No activity yet</div>';
+    return;
+  }
+
+  document.getElementById("activityLog").innerHTML = recent.map(r => {
+    const type    = r["Response Type"] || "other";
+    const color   = TYPE_COLORS[type] || "#7b82a8";
+    const icon    = TYPE_ICONS[type]  || "💬";
+    const ticket  = r["Ticket Raised"] === "Yes"
+      ? '<span class="badge ticket">Yes</span>'
+      : '<span style="color:var(--muted);font-size:12px">No</span>';
+
+    return `
+      <div class="table-row">
+        <div>
+          <div class="user-name">${esc(r["Name"] || "Unknown")}</div>
+          <div class="user-email">${esc(r["Email"] || "")}</div>
+        </div>
+        <div style="color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:12px">
+          ${esc((r["Message"] || "").substring(0, 80))}
+        </div>
+        <div>
+          <span class="badge ${type}">${icon} ${TYPE_LABELS[type] || type}</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">${timeAgo(r["Timestamp"])}</div>
+        <div>${ticket}</div>
+      </div>`;
+  }).join("");
+}
+
+// ── HELPERS ─────────────────────────────────────────────
+function esc(str) {
+  return String(str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+}
+
+function showLoading() {
+  document.getElementById("activityLog").innerHTML =
+    '<div class="loading"><div class="spinner"></div><span>Loading...</span></div>';
+  document.getElementById("topUsersGrid").innerHTML =
+    '<div class="loading"><div class="spinner"></div></div>';
+}
+
+function showEmpty(msg) {
+  document.getElementById("activityLog").innerHTML = `<div class="empty">${msg}</div>`;
+  document.getElementById("topUsersGrid").innerHTML= `<div class="empty">${msg}</div>`;
+  ["statTotal","statUsers","statTickets","statResolved"].forEach(id => {
+    document.getElementById(id).textContent = "0";
+  });
+}
+
+
+// ── AUTO REFRESH ─────────────────────────────────────────
+loadData();
+setInterval(loadData, 60000); // refresh every 60 seconds
+</script>
+</body>
+</html>
