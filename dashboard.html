@@ -2,541 +2,604 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Radix IT Helpdesk Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radix IT Helpdesk — Dashboard</title>
 <style>
-  :root {
-    --bg:        #0f1117;
-    --surface:   #1a1d27;
-    --surface2:  #22263a;
-    --border:    #2e3350;
-    --accent:    #4f6ef7;
-    --green:     #22c55e;
-    --yellow:    #f59e0b;
-    --red:       #ef4444;
-    --blue:      #60a5fa;
-    --text:      #e8eaf6;
-    --muted:     #7b82a8;
-    --radius:    12px;
-  }
+:root {
+  --bg:       #080b14;
+  --s1:       #0e1220;
+  --s2:       #141828;
+  --s3:       #1c2238;
+  --border:   #252d47;
+  --accent:   #4f6ef7;
+  --accent2:  #7b5ea7;
+  --green:    #22c55e;
+  --yellow:   #f59e0b;
+  --red:      #ef4444;
+  --blue:     #60a5fa;
+  --purple:   #a78bfa;
+  --pink:     #f472b6;
+  --text:     #e2e8f8;
+  --muted:    #6b7599;
+  --muted2:   #4a5278;
+  --r:        12px;
+  --r-sm:     8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:220px;
+  background:var(--s1);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:100;
+}
+.sb-logo{
+  padding:20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.sb-logo .icon{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.sb-logo h2{font-size:14px;font-weight:700;line-height:1.2;}
+.sb-logo p{font-size:10px;color:var(--muted);margin-top:1px;}
+.sb-nav{flex:1;padding:12px 8px;overflow-y:auto;}
+.sb-section{font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;padding:8px 10px 4px;}
+.sb-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:var(--r-sm);
+  font-size:13px;cursor:pointer;transition:all 0.15s;
+  color:var(--muted);margin-bottom:2px;
+}
+.sb-item:hover{background:var(--s2);color:var(--text);}
+.sb-item.active{background:linear-gradient(135deg,rgba(79,110,247,0.2),rgba(123,94,167,0.2));color:var(--accent);border:1px solid rgba(79,110,247,0.2);}
+.sb-item .dot{width:6px;height:6px;border-radius:50%;margin-left:auto;}
+.sb-footer{padding:16px;border-top:1px solid var(--border);}
+.sb-footer .status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
+.sb-footer .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,197,94,0.4);}50%{opacity:.7;box-shadow:0 0 0 4px rgba(34,197,94,0);}}
 
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 24px;
-  }
+/* ── MAIN ── */
+.main{margin-left:220px;min-height:100vh;display:flex;flex-direction:column;}
 
-  /* Header */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
+/* ── TOPBAR ── */
+.topbar{
+  height:60px;background:var(--s1);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;position:sticky;top:0;z-index:50;
+}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar-left h1{font-size:16px;font-weight:700;}
+.topbar-left .page-sub{font-size:12px;color:var(--muted);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.btn{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:var(--r-sm);font-size:12px;
+  cursor:pointer;transition:all 0.15s;border:1px solid var(--border);
+  background:var(--s2);color:var(--text);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.btn.primary:hover{background:#3d5de8;}
+.last-refresh{font-size:11px;color:var(--muted);}
 
-  .header-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+/* ── CONTENT ── */
+.content{padding:24px;flex:1;}
 
-  .logo {
-    width: 42px; height: 42px;
-    background: linear-gradient(135deg, var(--accent), #7b5ea7);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-  }
+/* ── VIEWS ── */
+.view{display:none;}
+.view.active{display:block;}
 
-  .header h1 { font-size: 20px; font-weight: 700; }
-  .header p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
+/* ── KPI STRIP ── */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+.kpi{
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px;position:relative;overflow:hidden;
+}
+.kpi::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--kpi-color,var(--accent));
+}
+.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.kpi-value{font-size:32px;font-weight:800;letter-spacing:-1px;margin:6px 0 2px;color:var(--kpi-color,var(--text));}
+.kpi-sub{font-size:11px;color:var(--muted);}
+.kpi-trend{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:11px;margin-top:6px;padding:2px 7px;border-radius:10px;
+}
+.kpi-trend.up{background:rgba(34,197,94,.15);color:var(--green);}
+.kpi-trend.down{background:rgba(239,68,68,.15);color:var(--red);}
+.kpi-trend.neutral{background:rgba(107,117,153,.15);color:var(--muted);}
 
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+/* ── GRID LAYOUTS ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3-1{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-1-2{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px;}
 
-  .status-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 6px 14px;
-    font-size: 12px;
-    color: var(--muted);
-  }
+/* ── CARD ── */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.card-badge{font-size:11px;padding:3px 10px;border-radius:10px;background:var(--s2);color:var(--muted);}
 
-  .status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse 2s infinite;
-  }
+/* ── DONUT ── */
+.donut-wrap{display:flex;align-items:center;gap:20px;}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;margin-bottom:8px;}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.legend-val{margin-left:auto;color:var(--muted);font-size:11px;padding-left:12px;}
 
-  @keyframes pulse {
-    0%,100% { opacity: 1; }
-    50%      { opacity: 0.4; }
-  }
+/* ── BAR CHART ── */
+.bar-item{margin-bottom:12px;}
+.bar-meta{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;}
+.bar-track{height:8px;background:var(--s3);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width .7s cubic-bezier(.4,0,.2,1);}
 
-  .refresh-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 7px 14px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
+/* ── LINE CHART ── */
+.line-chart-wrap{position:relative;height:160px;}
+.line-chart-wrap svg{width:100%;height:100%;}
 
-  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{
+  text-align:left;font-size:10px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;
+  padding:10px 12px;border-bottom:1px solid var(--border);
+  font-weight:600;white-space:nowrap;
+}
+.tbl td{
+  padding:12px;border-bottom:1px solid rgba(37,45,71,.5);
+  font-size:13px;vertical-align:middle;
+}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--s2);}
+.tbl .name{font-weight:500;}
+.tbl .email{font-size:11px;color:var(--muted);margin-top:1px;}
+.tbl .msg{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px;}
 
-  /* Stats */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 24px;
-  }
+/* ── BADGE ── */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;white-space:nowrap;
+}
+.badge.it_question  {background:rgba(79,110,247,.15);color:#818cf8;}
+.badge.ticket_raised{background:rgba(239,68,68,.15);color:#f87171;}
+.badge.resolved     {background:rgba(34,197,94,.15);color:#4ade80;}
+.badge.greeting     {background:rgba(245,158,11,.15);color:#fbbf24;}
+.badge.yes          {background:rgba(239,68,68,.15);color:#f87171;}
+.badge.no           {background:rgba(107,117,153,.15);color:var(--muted);}
 
-  .stat {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-  }
+/* ── USER CARD ── */
+.user-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;}
+.user-card{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;padding:16px;transition:border-color .15s;
+}
+.user-card:hover{border-color:var(--accent);}
+.user-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;color:#fff;margin-bottom:10px;
+}
+.user-name{font-weight:600;font-size:13px;}
+.user-email{font-size:11px;color:var(--muted);margin:2px 0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.user-stat{background:var(--s1);border-radius:6px;padding:6px 8px;text-align:center;}
+.user-stat-val{font-size:16px;font-weight:700;}
+.user-stat-label{font-size:10px;color:var(--muted);margin-top:1px;}
 
-  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-  .stat-value { font-size: 36px; font-weight: 700; letter-spacing: -1px; margin: 6px 0 4px; }
-  .stat-sub   { font-size: 11px; color: var(--muted); }
+/* ── ACTIVITY FEED ── */
+.feed-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 0;border-bottom:1px solid rgba(37,45,71,.5);
+}
+.feed-item:last-child{border-bottom:none;}
+.feed-icon{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+}
+.feed-body{flex:1;min-width:0;}
+.feed-name{font-weight:500;font-size:13px;}
+.feed-msg{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.feed-time{font-size:11px;color:var(--muted2);flex-shrink:0;margin-top:3px;}
 
-  .stat.blue   .stat-value { color: var(--blue); }
-  .stat.green  .stat-value { color: var(--green); }
-  .stat.yellow .stat-value { color: var(--yellow); }
-  .stat.red    .stat-value { color: var(--red); }
+/* ── HEATMAP ── */
+.heatmap{display:flex;gap:3px;flex-wrap:wrap;}
+.hm-cell{width:28px;height:28px;border-radius:4px;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);cursor:default;transition:all .15s;}
+.hm-cell:hover{transform:scale(1.2);}
 
-  /* Charts row */
-  .charts {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
+/* ── PROGRESS RING ── */
+.ring-wrap{display:flex;align-items:center;justify-content:center;flex-direction:column;padding:10px 0;}
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-  }
+/* ── EMPTY / LOADING ── */
+.empty{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;gap:12px;color:var(--muted);}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-  .card-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 16px;
-  }
+/* ── SUMMARY NUMBERS ── */
+.summary-row{display:flex;gap:16px;margin-top:12px;}
+.summary-item{flex:1;background:var(--s2);border-radius:8px;padding:12px;text-align:center;}
+.summary-val{font-size:22px;font-weight:700;}
+.summary-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
 
-  /* Bar chart */
-  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+/* ── INSIGHT CARDS ── */
+.insight-list{display:flex;flex-direction:column;gap:10px;}
+.insight{
+  display:flex;align-items:center;gap:12px;
+  background:var(--s2);border-radius:8px;padding:12px 14px;
+}
+.insight-icon{font-size:20px;flex-shrink:0;}
+.insight-text strong{display:block;font-size:13px;}
+.insight-text span{font-size:11px;color:var(--muted);}
 
-  .bar-item {}
-  .bar-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    margin-bottom: 4px;
-    color: var(--text);
-  }
+/* ── SCROLL ── */
+.tbl-scroll{overflow-x:auto;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
-  .bar-track {
-    height: 8px;
-    background: var(--surface2);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .bar-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.6s ease;
-  }
-
-  /* Donut chart */
-  .donut-wrap {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .donut-svg { flex-shrink: 0; }
-
-  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-  }
-
-  .legend-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .legend-count { color: var(--muted); margin-left: auto; font-size: 11px; }
-
-  /* Users table */
-  .table-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    margin-bottom: 24px;
-  }
-
-  .table-header-row {
-    display: grid;
-    grid-template-columns: 180px 1fr 130px 120px 90px;
-    padding: 12px 20px;
-    background: var(--surface2);
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .table-row {
-    display: grid;
-    grid-template-columns: 180px 1fr 130px 120px 90px;
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-    align-items: center;
-    transition: background 0.1s;
-  }
-
-  .table-row:last-child { border-bottom: none; }
-  .table-row:hover { background: var(--surface2); }
-
-  .user-name { font-weight: 500; }
-  .user-email { font-size: 11px; color: var(--muted); margin-top: 1px; }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 500;
-  }
-
-  .badge.ticket  { background: #1e3a5f; color: #60a5fa; }
-  .badge.it_question { background: #1a2e1a; color: #4ade80; }
-  .badge.resolved { background: #1a2e1a; color: #86efac; }
-  .badge.greeting { background: #2d2010; color: #fbbf24; }
-
-  /* Activity log */
-  .log-list { display: flex; flex-direction: column; gap: 0; }
-
-  .log-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-  }
-
-  .log-item:last-child { border-bottom: none; }
-
-  .log-icon {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-
-  .log-body { flex: 1; }
-  .log-name { font-weight: 500; }
-  .log-msg  { color: var(--muted); font-size: 12px; margin-top: 2px; }
-  .log-time { font-size: 11px; color: var(--muted); flex-shrink: 0; margin-top: 3px; }
-
-  /* Loading */
-  .loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px;
-    color: var(--muted);
-    gap: 12px;
-  }
-
-  .spinner {
-    width: 32px; height: 32px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Empty */
-  .empty {
-    text-align: center;
-    padding: 40px;
-    color: var(--muted);
-    font-size: 13px;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    body { padding: 16px; }
-    .stats { grid-template-columns: repeat(2, 1fr); }
-    .charts { grid-template-columns: 1fr; }
-    .table-header-row,
-    .table-row { grid-template-columns: 1fr 1fr 90px; }
-    .table-header-row > :nth-child(3),
-    .table-row > :nth-child(3),
-    .table-header-row > :nth-child(4),
-    .table-row > :nth-child(4) { display: none; }
-  }
-
-  @media (max-width: 480px) {
-    .stats { grid-template-columns: 1fr 1fr; }
-    .stat-value { font-size: 28px; }
-  }
-
-  .section-title {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 14px;
-  }
-
-  .top-users-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
-  }
-
-  .top-user-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-  }
-
-  .top-user-name { font-weight: 600; font-size: 13px; }
-  .top-user-email { font-size: 11px; color: var(--muted); margin: 2px 0 8px; }
-  .top-user-stats { display: flex; gap: 10px; }
-  .top-user-stat  { font-size: 11px; color: var(--muted); }
-  .top-user-stat span { color: var(--text); font-weight: 600; }
+/* ── RESPONSIVE ── */
+@media(max-width:1200px){
+  .kpi-strip{grid-template-columns:repeat(3,1fr);}
+  .grid-3{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .kpi-strip{grid-template-columns:repeat(2,1fr);}
+  .grid-2,.grid-3,.grid-3-1,.grid-1-2{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-left">
-    <div class="logo">🤖</div>
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="icon">🤖</div>
     <div>
-      <h1>Radix IT Helpdesk</h1>
-      <p>Bot Usage Dashboard — Live from Google Sheets</p>
+      <h2>IT Helpdesk</h2>
+      <p>Radix Dashboard</p>
     </div>
   </div>
-  <div class="header-right">
-    <div class="status-pill">
-      <div class="status-dot"></div>
-      Live Data
-    </div>
-    <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+  <div class="sb-nav">
+    <div class="sb-section">Analytics</div>
+    <div class="sb-item active" onclick="showView('overview')">📊 Overview</div>
+    <div class="sb-item" onclick="showView('users')">👥 Users</div>
+    <div class="sb-item" onclick="showView('tickets')">🎫 Tickets</div>
+    <div class="sb-item" onclick="showView('activity')">📋 Activity Log</div>
+    <div class="sb-section">Insights</div>
+    <div class="sb-item" onclick="showView('categories')">🏷️ Categories</div>
   </div>
-</div>
-
-<!-- Stats -->
-<div class="stats">
-  <div class="stat blue">
-    <div class="stat-label">Total Interactions</div>
-    <div class="stat-value" id="statTotal">—</div>
-    <div class="stat-sub">All time</div>
-  </div>
-  <div class="stat green">
-    <div class="stat-label">Unique Users</div>
-    <div class="stat-value" id="statUsers">—</div>
-    <div class="stat-sub">Employees using bot</div>
-  </div>
-  <div class="stat yellow">
-    <div class="stat-label">Tickets Raised</div>
-    <div class="stat-value" id="statTickets">—</div>
-    <div class="stat-sub">Auto-created</div>
-  </div>
-  <div class="stat red">
-    <div class="stat-label">Issues Resolved</div>
-    <div class="stat-value" id="statResolved">—</div>
-    <div class="stat-sub">By bot without ticket</div>
-  </div>
-</div>
-
-<!-- Charts -->
-<div class="charts">
-  <div class="card">
-    <div class="card-title">Interaction Types</div>
-    <div class="donut-wrap">
-      <svg class="donut-svg" width="120" height="120" viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r="48" fill="none" stroke="#22263a" stroke-width="18"/>
-        <g id="donutArcs"></g>
-        <text x="60" y="57" text-anchor="middle" fill="#e8eaf6" font-size="18" font-weight="700" id="donutTotal">0</text>
-        <text x="60" y="72" text-anchor="middle" fill="#7b82a8" font-size="9">total</text>
-      </svg>
-      <div class="donut-legend" id="donutLegend"></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">Top Issue Categories</div>
-    <div class="bar-chart" id="barChart">
-      <div class="empty">Loading...</div>
+  <div class="sb-footer">
+    <div class="status">
+      <div class="pulse"></div>
+      <span>Live — auto-refresh 60s</span>
     </div>
   </div>
 </div>
 
-<!-- Top Users -->
-<div class="section-title">Most Active Users</div>
-<div class="top-users-grid" id="topUsersGrid" style="margin-bottom:24px">
-  <div class="loading"><div class="spinner"></div></div>
-</div>
+<!-- MAIN -->
+<div class="main">
 
-<!-- Activity Log -->
-<div class="table-wrap">
-  <div class="table-header-row">
-    <div>Employee</div>
-    <div>Message</div>
-    <div>Type</div>
-    <div>Time</div>
-    <div>Ticket</div>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <h1 id="viewTitle">Overview</h1>
+        <div class="page-sub" id="viewSub">All time bot usage analytics</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="last-refresh" id="lastRefresh">Loading...</div>
+      <button class="btn" onclick="loadData()">↻ Refresh</button>
+    </div>
   </div>
-  <div id="activityLog">
-    <div class="loading"><div class="spinner"></div><span>Loading activity...</span></div>
-  </div>
-</div>
+
+  <div class="content">
+
+    <!-- ══ OVERVIEW VIEW ══ -->
+    <div class="view active" id="view-overview">
+
+      <!-- KPI Strip -->
+      <div class="kpi-strip">
+        <div class="kpi" style="--kpi-color:var(--blue)">
+          <div class="kpi-label">Total Interactions</div>
+          <div class="kpi-value" id="kTotal">—</div>
+          <div class="kpi-sub">All time</div>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--green)">
+          <div class="kpi-label">Unique Users</div>
+          <div class="kpi-value" id="kUsers">—</div>
+          <div class="kpi-sub">Employees using bot</div>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--yellow)">
+          <div class="kpi-label">Tickets Raised</div>
+          <div class="kpi-value" id="kTickets">—</div>
+          <div class="kpi-sub">Auto-created via bot</div>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--purple)">
+          <div class="kpi-label">IT Questions</div>
+          <div class="kpi-value" id="kQuestions">—</div>
+          <div class="kpi-sub">Answered by bot</div>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--green)">
+          <div class="kpi-label">Self-Resolved</div>
+          <div class="kpi-value" id="kResolved">—</div>
+          <div class="kpi-sub">Without raising ticket</div>
+        </div>
+      </div>
+
+      <div class="grid-3-1">
+        <!-- Interaction breakdown -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Interaction Breakdown</div>
+          </div>
+          <div class="donut-wrap">
+            <svg width="130" height="130" viewBox="0 0 130 130">
+              <circle cx="65" cy="65" r="52" fill="none" stroke="#1c2238" stroke-width="20"/>
+              <g id="donutArcs"></g>
+              <text x="65" y="61" text-anchor="middle" fill="#e2e8f8" font-size="22" font-weight="800" id="donutNum">0</text>
+              <text x="65" y="76" text-anchor="middle" fill="#6b7599" font-size="10">total</text>
+            </svg>
+            <div id="donutLegend" style="flex:1"></div>
+          </div>
+          <div class="summary-row" id="summaryRow"></div>
+        </div>
+
+        <!-- Resolution rate -->
+        <div class="card">
+          <div class="card-head"><div class="card-title">Resolution Rate</div></div>
+          <div class="ring-wrap">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#1c2238" stroke-width="14"/>
+              <circle cx="60" cy="60" r="48" fill="none" stroke="var(--green)" stroke-width="14"
+                stroke-dasharray="301.6" id="resolveRing"
+                stroke-dashoffset="301.6"
+                stroke-linecap="round"
+                transform="rotate(-90 60 60)"/>
+              <text x="60" y="56" text-anchor="middle" fill="#e2e8f8" font-size="20" font-weight="800" id="resolveText">0%</text>
+              <text x="60" y="71" text-anchor="middle" fill="#6b7599" font-size="9">resolved</text>
+            </svg>
+            <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px">Issues resolved by bot<br>without raising a ticket</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Top categories -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Top Issue Categories</div>
+            <div class="card-badge" id="catTotal">0 issues</div>
+          </div>
+          <div id="catBars"></div>
+        </div>
+
+        <!-- Recent activity -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Recent Activity</div>
+            <div class="card-badge">Last 10</div>
+          </div>
+          <div id="recentFeed"></div>
+        </div>
+      </div>
+
+      <!-- Insights -->
+      <div class="card">
+        <div class="card-head"><div class="card-title">Key Insights</div></div>
+        <div class="grid-3" style="margin:0" id="insightCards"></div>
+      </div>
+
+    </div><!-- /overview -->
+
+    <!-- ══ USERS VIEW ══ -->
+    <div class="view" id="view-users">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head"><div class="card-title">All Users</div><div class="card-badge" id="userCount">0 users</div></div>
+        <div class="user-grid" id="userGrid"></div>
+      </div>
+    </div>
+
+    <!-- ══ TICKETS VIEW ══ -->
+    <div class="view" id="view-tickets">
+      <div class="kpi-strip" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+        <div class="kpi" style="--kpi-color:var(--red)">
+          <div class="kpi-label">Total Tickets</div>
+          <div class="kpi-value" id="tTotal">—</div>
+          <div class="kpi-sub">All time</div>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--yellow)">
+          <div class="kpi-label">Unique Requesters</div>
+          <div class="kpi-value" id="tRequesters">—</div>
+          <div class="kpi-sub">Different employees</div>
+        </div>
+        <div class="kpi" style="--kpi-color:var(--purple)">
+          <div class="kpi-label">Most Common Issue</div>
+          <div class="kpi-value" id="tTopIssue" style="font-size:16px;padding-top:4px">—</div>
+          <div class="kpi-sub">By category</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">All Tickets</div></div>
+        <div class="tbl-scroll">
+          <table class="tbl">
+            <thead><tr>
+              <th>#</th><th>Employee</th><th>Issue Description</th><th>Category</th><th>Date</th>
+            </tr></thead>
+            <tbody id="ticketTbl"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ACTIVITY VIEW ══ -->
+    <div class="view" id="view-activity">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Full Activity Log</div>
+          <div class="card-badge" id="actCount">0 entries</div>
+        </div>
+        <div class="tbl-scroll">
+          <table class="tbl">
+            <thead><tr>
+              <th>Time</th><th>Employee</th><th>Message</th><th>Type</th><th>Ticket</th>
+            </tr></thead>
+            <tbody id="actTbl"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CATEGORIES VIEW ══ -->
+    <div class="view" id="view-categories">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><div class="card-title">Issues by Category</div></div>
+          <div id="catDetail"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Category Breakdown</div></div>
+          <div id="catDonut" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
 
 <script>
-// ── CONFIG ─────────────────────────────────────────────
-// Replace with your Google Sheet's CSV export URL
-// File → Share → Publish to web → CSV format → copy link
+// ── CONFIG ─────────────────────────────────────────────────────────────
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vShs4pzConyEzuwecV0S_Lnhqkt_EzYJn1sjcru7zTILDzHQpw-3ZC7Dt0hs0fYJT4s7gayqzT-5J6L/pub?gid=0&single=true&output=csv";
 
-// ── COLORS ─────────────────────────────────────────────
-const TYPE_COLORS = {
+// ── CONSTANTS ───────────────────────────────────────────────────────────
+const COLORS = {
   it_question:   "#4f6ef7",
   ticket_raised: "#ef4444",
   resolved:      "#22c55e",
   greeting:      "#f59e0b",
   test:          "#7b82a8"
 };
-
-const TYPE_LABELS = {
+const LABELS = {
   it_question:   "IT Questions",
   ticket_raised: "Tickets Raised",
   resolved:      "Resolved",
   greeting:      "Greetings",
   test:          "Test"
 };
-
-const TYPE_ICONS = {
+const ICONS = {
   it_question:   "💬",
   ticket_raised: "🎫",
   resolved:      "✅",
   greeting:      "👋",
   test:          "🧪"
 };
-
-// ── ISSUE KEYWORDS ─────────────────────────────────────
+const CAT_COLORS = ["#4f6ef7","#22c55e","#f59e0b","#ef4444","#a78bfa","#f472b6","#60a5fa","#34d399"];
 const CATEGORIES = {
-  "VPN":      ["vpn", "openvpn", "secureconnect"],
-  "Printer":  ["print", "printer", "hp laser", "canon"],
-  "WiFi":     ["wifi", "wi-fi", "wireless", "internet", "network"],
-  "Password": ["password", "reset", "login", "locked"],
-  "Laptop":   ["laptop", "slow", "performance", "freezing", "crash"],
-  "Email":    ["email", "gmail", "outlook", "mail"],
-  "Slack":    ["slack"],
-  "Zoom":     ["zoom", "camera", "video call"],
-  "Other":    []
+  "VPN":       ["vpn","openvpn","secureconnect"],
+  "Printer":   ["print","printer","hp laser","canon"],
+  "WiFi":      ["wifi","wi-fi","wireless","internet","network"],
+  "Password":  ["password","reset","login","locked","ad password"],
+  "Laptop":    ["laptop","slow","performance","freezing","crash","screen","battery"],
+  "Email":     ["email","gmail","outlook","mail"],
+  "Slack":     ["slack"],
+  "Zoom":      ["zoom","camera","video call","meeting"],
+  "Software":  ["install","software","office","ms office","application","app"],
+  "Hardware":  ["hardware","device","replace","broken","stolen","dead"],
 };
 
 function categorize(msg) {
-  const m = msg.toLowerCase();
-  for (const [cat, keywords] of Object.entries(CATEGORIES)) {
-    if (cat === "Other") continue;
-    if (keywords.some(k => m.includes(k))) return cat;
+  const m = (msg||"").toLowerCase();
+  for (const [cat, kws] of Object.entries(CATEGORIES)) {
+    if (kws.some(k => m.includes(k))) return cat;
   }
   return "Other";
 }
 
 function timeAgo(dateStr) {
   if (!dateStr) return "—";
-  const d    = new Date(dateStr);
-  const diff = (Date.now() - d) / 1000;
-  if (diff < 60)   return "Just now";
-  if (diff < 3600) return Math.floor(diff/60) + "m ago";
-  if (diff < 86400)return Math.floor(diff/3600) + "h ago";
+  const diff = (Date.now() - new Date(dateStr)) / 1000;
+  if (diff < 60)    return "Just now";
+  if (diff < 3600)  return Math.floor(diff/60) + "m ago";
+  if (diff < 86400) return Math.floor(diff/3600) + "h ago";
   return Math.floor(diff/86400) + "d ago";
 }
 
-// ── LOAD DATA ───────────────────────────────────────────
-async function loadData() {
-  showLoading();
-
+function fmtDate(dateStr) {
+  if (!dateStr) return "—";
   try {
-    // Fetch CSV from Google Sheets (must be published to web)
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) +
+           " " + d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+  } catch { return dateStr; }
+}
+
+function esc(s) {
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function initials(name) {
+  return (name||"?").split(" ").map(w=>w[0]).join("").substring(0,2).toUpperCase();
+}
+
+// ── VIEW SWITCHING ──────────────────────────────────────────────────────
+const viewMeta = {
+  overview:   {title:"Overview",      sub:"All time bot usage analytics"},
+  users:      {title:"Users",         sub:"Employee engagement breakdown"},
+  tickets:    {title:"Tickets",       sub:"All raised support tickets"},
+  activity:   {title:"Activity Log",  sub:"Full interaction history"},
+  categories: {title:"Categories",    sub:"Issue type analysis"},
+};
+
+function showView(id) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelectorAll(".sb-item").forEach(i => i.classList.remove("active"));
+  document.getElementById("view-" + id).classList.add("active");
+  document.querySelector(`[onclick="showView('${id}')"]`).classList.add("active");
+  document.getElementById("viewTitle").textContent = viewMeta[id].title;
+  document.getElementById("viewSub").textContent   = viewMeta[id].sub;
+}
+
+// ── LOAD DATA ───────────────────────────────────────────────────────────
+let allData = [];
+
+async function loadData() {
+  document.getElementById("lastRefresh").textContent = "Loading...";
+  try {
     const res  = await fetch(SHEET_CSV_URL + "&t=" + Date.now());
+    if (!res.ok) throw new Error("HTTP " + res.status);
     const text = await res.text();
     const rows = parseCSV(text);
-
-    if (rows.length < 2) {
-      showEmpty("No data yet. Interact with the bot first.");
-      return;
-    }
+    if (rows.length < 2) { showGlobalEmpty("No data yet."); return; }
 
     const headers = rows[0];
-    const data    = rows.slice(1).map(row => {
+    allData = rows.slice(1).map(row => {
       const obj = {};
-      headers.forEach((h, i) => obj[h.trim()] = (row[i] || "").trim());
+      headers.forEach((h,i) => obj[h.trim()] = (row[i]||"").trim());
       return obj;
     }).filter(r => r["User ID"]);
 
-    renderDashboard(data);
+    renderAll(allData);
+    document.getElementById("lastRefresh").textContent =
+      "Last updated: " + new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
 
   } catch (err) {
     console.error(err);
-    showError();
+    document.getElementById("lastRefresh").textContent = "Error loading data";
   }
 }
 
 function parseCSV(text) {
   const rows = [];
-  const lines = text.split("\n");
-  for (const line of lines) {
+  for (const line of text.split("\n")) {
     if (!line.trim()) continue;
-    const cols = [];
-    let cur = "", inQ = false;
+    const cols = []; let cur = "", inQ = false;
     for (const ch of line) {
       if (ch === '"') inQ = !inQ;
       else if (ch === ',' && !inQ) { cols.push(cur); cur = ""; }
@@ -548,195 +611,344 @@ function parseCSV(text) {
   return rows;
 }
 
-// ── RENDER ──────────────────────────────────────────────
-function renderDashboard(data) {
-  // Stats
-  const uniqueUsers = new Set(data.map(r => r["User ID"])).size;
-  const tickets     = data.filter(r => r["Ticket Raised"] === "Yes").length;
-  const resolved    = data.filter(r => r["Response Type"] === "resolved").length;
-
-  document.getElementById("statTotal").textContent   = data.length;
-  document.getElementById("statUsers").textContent   = uniqueUsers;
-  document.getElementById("statTickets").textContent = tickets;
-  document.getElementById("statResolved").textContent= resolved;
-
-  // Donut
+// ── RENDER ALL ──────────────────────────────────────────────────────────
+function renderAll(data) {
+  renderKPIs(data);
   renderDonut(data);
-
-  // Bar chart
-  renderBarChart(data);
-
-  // Top users
-  renderTopUsers(data);
-
-  // Activity log
-  renderActivityLog(data);
+  renderResolutionRing(data);
+  renderCategoryBars(data);
+  renderRecentFeed(data);
+  renderInsights(data);
+  renderUsers(data);
+  renderTickets(data);
+  renderActivity(data);
+  renderCategoryDetail(data);
 }
 
+// ── KPIs ────────────────────────────────────────────────────────────────
+function renderKPIs(data) {
+  const users     = new Set(data.map(r => r["User ID"])).size;
+  const tickets   = data.filter(r => r["Ticket Raised"] === "Yes").length;
+  const questions = data.filter(r => r["Response Type"] === "it_question").length;
+  const resolved  = data.filter(r => r["Response Type"] === "resolved").length;
+
+  set("kTotal",    data.length);
+  set("kUsers",    users);
+  set("kTickets",  tickets);
+  set("kQuestions",questions);
+  set("kResolved", resolved);
+  set("tTotal",    tickets);
+  set("tRequesters", new Set(data.filter(r=>r["Ticket Raised"]==="Yes").map(r=>r["User ID"])).size);
+}
+
+function set(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+// ── DONUT ───────────────────────────────────────────────────────────────
 function renderDonut(data) {
   const counts = {};
-  data.forEach(r => {
-    const t = r["Response Type"] || "other";
-    counts[t] = (counts[t] || 0) + 1;
-  });
+  data.forEach(r => { const t = r["Response Type"]||"other"; counts[t]=(counts[t]||0)+1; });
+  const total = data.length;
+  const r=52, cx=65, cy=65, circ=2*Math.PI*r;
+  let offset=0, arcs="", legend="", summary="";
 
-  const total  = data.length;
-  const r      = 48;
-  const cx     = 60, cy = 60;
-  const circ   = 2 * Math.PI * r;
-  let offset   = 0;
-  const arcs   = [];
-  const legend = [];
-
-  document.getElementById("donutTotal").textContent = total;
+  set("donutNum", total);
 
   for (const [type, count] of Object.entries(counts)) {
-    const pct   = count / total;
-    const dash  = pct * circ;
-    const color = TYPE_COLORS[type] || "#7b82a8";
-    arcs.push(`
-      <circle cx="${cx}" cy="${cy}" r="${r}"
-        fill="none" stroke="${color}" stroke-width="18"
-        stroke-dasharray="${dash} ${circ - dash}"
-        stroke-dashoffset="${circ - offset}"
-        transform="rotate(-90 ${cx} ${cy})"
-      />`);
+    const dash  = (count/total)*circ;
+    const color = COLORS[type]||"#7b82a8";
+    arcs += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="20"
+      stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ-offset}"
+      transform="rotate(-90 ${cx} ${cy})"/>`;
     offset += dash;
-    legend.push(`
-      <div class="legend-item">
-        <div class="legend-dot" style="background:${color}"></div>
-        <span>${TYPE_LABELS[type] || type}</span>
-        <span class="legend-count">${count}</span>
-      </div>`);
+    const pct = Math.round((count/total)*100);
+    legend += `<div class="legend-item">
+      <div class="legend-dot" style="background:${color}"></div>
+      <span style="font-size:12px">${LABELS[type]||type}</span>
+      <span class="legend-val">${count} (${pct}%)</span>
+    </div>`;
+    summary += `<div class="summary-item">
+      <div class="summary-val" style="color:${color}">${count}</div>
+      <div class="summary-label">${LABELS[type]||type}</div>
+    </div>`;
   }
 
-  document.getElementById("donutArcs").innerHTML    = arcs.join("");
-  document.getElementById("donutLegend").innerHTML  = legend.join("");
+  document.getElementById("donutArcs").innerHTML   = arcs;
+  document.getElementById("donutLegend").innerHTML = legend;
+  document.getElementById("summaryRow").innerHTML  = summary;
 }
 
-function renderBarChart(data) {
-  const itQuestions = data.filter(r => r["Response Type"] === "it_question");
-  const cats        = {};
-  itQuestions.forEach(r => {
-    const cat = categorize(r["Message"] || "");
-    cats[cat] = (cats[cat] || 0) + 1;
-  });
+// ── RESOLUTION RING ─────────────────────────────────────────────────────
+function renderResolutionRing(data) {
+  const questions = data.filter(r => r["Response Type"] === "it_question").length;
+  const resolved  = data.filter(r => r["Response Type"] === "resolved").length;
+  const pct = questions > 0 ? Math.round((resolved/questions)*100) : 0;
+  const circ = 301.6;
+  const dash = (pct/100) * circ;
 
-  const sorted = Object.entries(cats).sort((a,b) => b[1]-a[1]).slice(0,6);
-  const max    = sorted[0]?.[1] || 1;
+  const ring = document.getElementById("resolveRing");
+  const txt  = document.getElementById("resolveText");
+  if (ring) ring.style.strokeDashoffset = circ - dash;
+  if (txt)  txt.textContent = pct + "%";
+}
 
-  const colors = ["#4f6ef7","#22c55e","#f59e0b","#ef4444","#a78bfa","#60a5fa"];
+// ── CATEGORY BARS ───────────────────────────────────────────────────────
+function renderCategoryBars(data) {
+  const cats = {};
+  data.filter(r => r["Response Type"]==="it_question" || r["Ticket Raised"]==="Yes")
+      .forEach(r => {
+        const cat = categorize(r["Message"]);
+        cats[cat] = (cats[cat]||0)+1;
+      });
 
-  if (!sorted.length) {
-    document.getElementById("barChart").innerHTML =
-      '<div class="empty">No IT questions logged yet</div>';
-    return;
-  }
+  const sorted = Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,7);
+  const max = sorted[0]?.[1]||1;
 
-  document.getElementById("barChart").innerHTML = sorted.map(([cat, count], i) => `
-    <div class="bar-item">
-      <div class="bar-label">
-        <span>${cat}</span>
-        <span style="color:var(--muted)">${count}</span>
+  set("catTotal", (Object.values(cats).reduce((a,b)=>a+b,0)) + " issues");
+
+  document.getElementById("catBars").innerHTML = sorted.length
+    ? sorted.map(([cat,count],i) => `
+        <div class="bar-item">
+          <div class="bar-meta">
+            <span>${cat}</span>
+            <span style="color:var(--muted)">${count} issue${count!==1?"s":""}</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${(count/max)*100}%;background:${CAT_COLORS[i%CAT_COLORS.length]}"></div>
+          </div>
+        </div>`).join("")
+    : '<div class="empty">No data yet</div>';
+
+  // top issue for tickets view
+  const topCat = sorted[0]?.[0] || "—";
+  set("tTopIssue", topCat);
+}
+
+// ── RECENT FEED ─────────────────────────────────────────────────────────
+function renderRecentFeed(data) {
+  const recent = [...data].reverse().slice(0,10);
+  document.getElementById("recentFeed").innerHTML = recent.length
+    ? recent.map(r => {
+        const type  = r["Response Type"]||"other";
+        const color = COLORS[type]||"#7b82a8";
+        const icon  = ICONS[type]||"💬";
+        return `<div class="feed-item">
+          <div class="feed-icon" style="background:${color}22">${icon}</div>
+          <div class="feed-body">
+            <div class="feed-name">${esc(r["Name"]||"Unknown")}</div>
+            <div class="feed-msg">${esc((r["Message"]||"").substring(0,60))}</div>
+          </div>
+          <div class="feed-time">${timeAgo(r["Timestamp"])}</div>
+        </div>`;
+      }).join("")
+    : '<div class="empty">No recent activity</div>';
+}
+
+// ── INSIGHTS ────────────────────────────────────────────────────────────
+function renderInsights(data) {
+  const total     = data.length;
+  const tickets   = data.filter(r=>r["Ticket Raised"]==="Yes").length;
+  const questions = data.filter(r=>r["Response Type"]==="it_question").length;
+  const resolved  = data.filter(r=>r["Response Type"]==="resolved").length;
+  const users     = new Set(data.map(r=>r["User ID"])).size;
+  const ticketRate= total>0 ? Math.round((tickets/total)*100) : 0;
+  const resolveRate=questions>0?Math.round((resolved/questions)*100):0;
+  const avgPerUser= users>0 ? (total/users).toFixed(1) : 0;
+
+  const cats = {};
+  data.forEach(r => { const c=categorize(r["Message"]); cats[c]=(cats[c]||0)+1; });
+  const topCat = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+
+  document.getElementById("insightCards").innerHTML = `
+    <div class="insight-list">
+      <div class="insight">
+        <div class="insight-icon">🎯</div>
+        <div class="insight-text">
+          <strong>Ticket Rate: ${ticketRate}%</strong>
+          <span>Of all interactions result in a ticket</span>
+        </div>
       </div>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${(count/max)*100}%;background:${colors[i%colors.length]}"></div>
+      <div class="insight">
+        <div class="insight-icon">✅</div>
+        <div class="insight-text">
+          <strong>Self-Service Rate: ${resolveRate}%</strong>
+          <span>Issues resolved without IT team involvement</span>
+        </div>
       </div>
     </div>
-  `).join("");
+    <div class="insight-list">
+      <div class="insight">
+        <div class="insight-icon">👤</div>
+        <div class="insight-text">
+          <strong>Avg ${avgPerUser} interactions/user</strong>
+          <span>Across ${users} unique employee${users!==1?"s":""}</span>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="insight-icon">🏆</div>
+        <div class="insight-text">
+          <strong>Top issue: ${topCat?topCat[0]:"None yet"}</strong>
+          <span>${topCat?topCat[1]+" occurrences recorded":"No issues logged"}</span>
+        </div>
+      </div>
+    </div>
+    <div class="insight-list">
+      <div class="insight">
+        <div class="insight-icon">🤖</div>
+        <div class="insight-text">
+          <strong>${questions} questions answered</strong>
+          <span>Bot handled first-level support automatically</span>
+        </div>
+      </div>
+      <div class="insight">
+        <div class="insight-icon">⚡</div>
+        <div class="insight-text">
+          <strong>24/7 availability</strong>
+          <span>Bot handles issues outside office hours</span>
+        </div>
+      </div>
+    </div>`;
 }
 
-function renderTopUsers(data) {
+// ── USERS ───────────────────────────────────────────────────────────────
+function renderUsers(data) {
   const users = {};
   data.forEach(r => {
-    const id = r["User ID"];
-    if (!id) return;
-    if (!users[id]) users[id] = { name: r["Name"] || id, email: r["Email"] || "", questions: 0, tickets: 0, last: "" };
-    if (r["Response Type"] === "it_question") users[id].questions++;
-    if (r["Ticket Raised"] === "Yes")         users[id].tickets++;
-    if (!users[id].last || r["Timestamp"] > users[id].last) users[id].last = r["Timestamp"];
+    const id = r["User ID"]; if(!id) return;
+    if (!users[id]) users[id]={name:r["Name"]||id,email:r["Email"]||"",questions:0,tickets:0,greetings:0,resolved:0};
+    if (r["Response Type"]==="it_question") users[id].questions++;
+    if (r["Response Type"]==="resolved")    users[id].resolved++;
+    if (r["Response Type"]==="greeting")    users[id].greetings++;
+    if (r["Ticket Raised"]==="Yes")         users[id].tickets++;
   });
 
-  const sorted = Object.values(users).sort((a,b) => b.questions - a.questions).slice(0,8);
+  const sorted = Object.values(users).sort((a,b)=>b.questions-a.questions);
+  set("userCount", sorted.length + " users");
 
-  if (!sorted.length) {
-    document.getElementById("topUsersGrid").innerHTML = '<div class="empty">No users yet</div>';
-    return;
-  }
+  document.getElementById("userGrid").innerHTML = sorted.length
+    ? sorted.map(u => `
+        <div class="user-card">
+          <div class="user-avatar">${initials(u.name)}</div>
+          <div class="user-name">${esc(u.name)}</div>
+          <div class="user-email">${esc(u.email)}</div>
+          <div class="user-stats">
+            <div class="user-stat">
+              <div class="user-stat-val" style="color:var(--blue)">${u.questions}</div>
+              <div class="user-stat-label">Questions</div>
+            </div>
+            <div class="user-stat">
+              <div class="user-stat-val" style="color:var(--red)">${u.tickets}</div>
+              <div class="user-stat-label">Tickets</div>
+            </div>
+            <div class="user-stat">
+              <div class="user-stat-val" style="color:var(--green)">${u.resolved}</div>
+              <div class="user-stat-label">Resolved</div>
+            </div>
+            <div class="user-stat">
+              <div class="user-stat-val" style="color:var(--yellow)">${u.greetings}</div>
+              <div class="user-stat-label">Greetings</div>
+            </div>
+          </div>
+        </div>`).join("")
+    : '<div class="empty">No users yet</div>';
+}
 
-  document.getElementById("topUsersGrid").innerHTML = sorted.map(u => `
-    <div class="top-user-card">
-      <div class="top-user-name">${esc(u.name)}</div>
-      <div class="top-user-email">${esc(u.email)}</div>
-      <div class="top-user-stats">
-        <div class="top-user-stat">Questions: <span>${u.questions}</span></div>
-        <div class="top-user-stat">Tickets: <span>${u.tickets}</span></div>
+// ── TICKETS ─────────────────────────────────────────────────────────────
+function renderTickets(data) {
+  const tickets = data.filter(r=>r["Ticket Raised"]==="Yes");
+  document.getElementById("ticketTbl").innerHTML = tickets.length
+    ? tickets.map((r,i) => `
+        <tr>
+          <td style="color:var(--muted)">#${tickets.length-i}</td>
+          <td>
+            <div class="name">${esc(r["Name"]||"Unknown")}</div>
+            <div class="email">${esc(r["Email"]||"")}</div>
+          </td>
+          <td class="msg">${esc(r["Message"]||"")}</td>
+          <td><span class="badge ticket_raised">${categorize(r["Message"])}</span></td>
+          <td style="font-size:12px;color:var(--muted);white-space:nowrap">${fmtDate(r["Timestamp"])}</td>
+        </tr>`).reverse().join("")
+    : '<tr><td colspan="5" class="empty">No tickets raised yet</td></tr>';
+}
+
+// ── ACTIVITY ─────────────────────────────────────────────────────────────
+function renderActivity(data) {
+  const recent = [...data].reverse();
+  set("actCount", recent.length + " entries");
+  document.getElementById("actTbl").innerHTML = recent.length
+    ? recent.map(r => {
+        const type = r["Response Type"]||"other";
+        const ticket = r["Ticket Raised"]==="Yes"
+          ? '<span class="badge yes">Yes</span>'
+          : '<span class="badge no">No</span>';
+        return `<tr>
+          <td style="font-size:11px;color:var(--muted);white-space:nowrap">${fmtDate(r["Timestamp"])}</td>
+          <td>
+            <div class="name">${esc(r["Name"]||"Unknown")}</div>
+            <div class="email">${esc(r["Email"]||"")}</div>
+          </td>
+          <td class="msg">${esc((r["Message"]||"").substring(0,100))}</td>
+          <td><span class="badge ${type}">${ICONS[type]||"💬"} ${LABELS[type]||type}</span></td>
+          <td>${ticket}</td>
+        </tr>`;
+      }).join("")
+    : '<tr><td colspan="5" class="empty">No activity yet</td></tr>';
+}
+
+// ── CATEGORY DETAIL ──────────────────────────────────────────────────────
+function renderCategoryDetail(data) {
+  const cats = {};
+  data.forEach(r => { const c=categorize(r["Message"]); cats[c]=(cats[c]||0)+1; });
+  const sorted = Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const total  = sorted.reduce((s,[,c])=>s+c,0);
+  const max    = sorted[0]?.[1]||1;
+
+  document.getElementById("catDetail").innerHTML = sorted.map(([cat,count],i) => `
+    <div class="bar-item">
+      <div class="bar-meta">
+        <span style="font-weight:500">${cat}</span>
+        <span style="color:var(--muted)">${count} — ${Math.round((count/total)*100)}%</span>
       </div>
-    </div>
-  `).join("");
-}
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(count/max)*100}%;background:${CAT_COLORS[i%CAT_COLORS.length]}"></div>
+      </div>
+    </div>`).join("") || '<div class="empty">No data</div>';
 
-function renderActivityLog(data) {
-  const recent = [...data].reverse().slice(0, 50);
-
-  if (!recent.length) {
-    document.getElementById("activityLog").innerHTML = '<div class="empty">No activity yet</div>';
-    return;
-  }
-
-  document.getElementById("activityLog").innerHTML = recent.map(r => {
-    const type    = r["Response Type"] || "other";
-    const color   = TYPE_COLORS[type] || "#7b82a8";
-    const icon    = TYPE_ICONS[type]  || "💬";
-    const ticket  = r["Ticket Raised"] === "Yes"
-      ? '<span class="badge ticket">Yes</span>'
-      : '<span style="color:var(--muted);font-size:12px">No</span>';
-
-    return `
-      <div class="table-row">
-        <div>
-          <div class="user-name">${esc(r["Name"] || "Unknown")}</div>
-          <div class="user-email">${esc(r["Email"] || "")}</div>
-        </div>
-        <div style="color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:12px">
-          ${esc((r["Message"] || "").substring(0, 80))}
-        </div>
-        <div>
-          <span class="badge ${type}">${icon} ${TYPE_LABELS[type] || type}</span>
-        </div>
-        <div style="font-size:12px;color:var(--muted)">${timeAgo(r["Timestamp"])}</div>
-        <div>${ticket}</div>
-      </div>`;
-  }).join("");
-}
-
-// ── HELPERS ─────────────────────────────────────────────
-function esc(str) {
-  return String(str)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
-}
-
-function showLoading() {
-  document.getElementById("activityLog").innerHTML =
-    '<div class="loading"><div class="spinner"></div><span>Loading...</span></div>';
-  document.getElementById("topUsersGrid").innerHTML =
-    '<div class="loading"><div class="spinner"></div></div>';
-}
-
-function showEmpty(msg) {
-  document.getElementById("activityLog").innerHTML = `<div class="empty">${msg}</div>`;
-  document.getElementById("topUsersGrid").innerHTML= `<div class="empty">${msg}</div>`;
-  ["statTotal","statUsers","statTickets","statResolved"].forEach(id => {
-    document.getElementById(id).textContent = "0";
+  // Donut for categories
+  const r=52,cx=65,cy=65,circ=2*Math.PI*r;
+  let offset=0, arcs="", legend="";
+  sorted.slice(0,7).forEach(([cat,count],i) => {
+    const dash=(count/total)*circ, color=CAT_COLORS[i%CAT_COLORS.length];
+    arcs+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="20"
+      stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${circ-offset}"
+      transform="rotate(-90 ${cx} ${cy})"/>`;
+    offset+=dash;
+    legend+=`<div class="legend-item">
+      <div class="legend-dot" style="background:${color}"></div>
+      <span style="font-size:12px">${cat}</span>
+      <span class="legend-val">${count}</span>
+    </div>`;
   });
+
+  document.getElementById("catDonut").innerHTML = `
+    <svg width="130" height="130" viewBox="0 0 130 130">
+      <circle cx="65" cy="65" r="52" fill="none" stroke="#1c2238" stroke-width="20"/>
+      ${arcs}
+      <text x="65" y="61" text-anchor="middle" fill="#e2e8f8" font-size="20" font-weight="800">${total}</text>
+      <text x="65" y="76" text-anchor="middle" fill="#6b7599" font-size="10">issues</text>
+    </svg>
+    <div>${legend}</div>`;
 }
 
+function showGlobalEmpty(msg) {
+  document.querySelectorAll(".empty").forEach(e => e.textContent = msg);
+}
 
-// ── AUTO REFRESH ─────────────────────────────────────────
+// ── START ─────────────────────────────────────────────────────────────
 loadData();
-setInterval(loadData, 60000); // refresh every 60 seconds
+setInterval(loadData, 60000);
 </script>
 </body>
 </html>
